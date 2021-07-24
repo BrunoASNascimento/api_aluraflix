@@ -1,6 +1,7 @@
 import flask
-from flask import request, jsonify, send_file
-from dotenv import find_dotenv, load_dotenv
+from flask import request, jsonify
+from waitress import serve
+# from dotenv import find_dotenv, load_dotenv
 
 from utils_mongodb.mongo_connection import get_db_handle_mongodb
 from utils_mongodb.read_documents import get_all_documents, get_one_document
@@ -102,5 +103,7 @@ def page_not_found(e):
 
 
 if __name__ == "__main__":
-    load_dotenv(find_dotenv())
-    app.run(debug=True)
+    # load_dotenv(find_dotenv())
+    # app.run()
+
+    serve(app, host="0.0.0.0")

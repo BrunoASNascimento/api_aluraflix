@@ -1,7 +1,3 @@
-from bson import json_util
-import json
-
-
 __all__ = ['create_document']
 
 
