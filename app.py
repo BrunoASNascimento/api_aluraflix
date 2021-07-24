@@ -6,6 +6,7 @@ from utils_mongodb.mongo_connection import get_db_handle_mongodb
 from utils_mongodb.read_documents import get_all_documents, get_one_document
 from utils_mongodb.create_document import create_document
 from utils_mongodb.delete_document import delete_one_document
+from utils_mongodb.update_document import update_one_document
 
 app = flask.Flask(__name__)
 
@@ -62,9 +63,20 @@ def update_one_video():
     data_request = request.get_json()
     db_handle, _ = get_db_handle_mongodb(database_name='study')
 
-    if data_request.get('id'):
-        return jsonify({'message': 'Não foi encontrado o campo "id", por favor, inserir.', 'error': True})
-    document = get_one_document(db_handle, data_request['id'])
+    if data_request.get('id') == None:
+        return jsonify({'message': "Não foi encontrado o campo 'id', por favor, inserir.", 'error': True})
+    else:
+        id_value = data_request['id']
+        data_request.pop('id')
+        modified_count_value, matched_count = update_one_document(
+            db_handle, id_value, data_request)
+        if (modified_count_value == 0) and (matched_count == 0):
+            return jsonify({'message': 'Videos não encontrado.', 'error': True})
+        elif (modified_count_value == 0) and (matched_count > 0):
+            return jsonify({'message': 'Video não alterado, todos os campos novos são iguais aos campos anteriores.', 'error': True})
+        else:
+            data = get_one_document(db_handle, id_value)
+            return jsonify(data)
 
 
 @app.errorhandler(404)
@@ -76,6 +88,17 @@ def page_not_found(e):
     <img src="{url_link}">
     </center>
     </body>""", 404)
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    url_link = 'https://http.cat/500.png'
+    return (f"""
+    <body style="background-color:black;">
+    <center>
+    <img src="{url_link}">
+    </center>
+    </body>""", 500)
 
 
 if __name__ == "__main__":
