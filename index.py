@@ -1,6 +1,6 @@
 import flask
 from flask import request, jsonify
-from waitress import serve
+# from waitress import serve
 # from dotenv import find_dotenv, load_dotenv
 
 from utils_mongodb.mongo_connection import get_db_handle_mongodb
@@ -104,6 +104,6 @@ def page_not_found(e):
 
 if __name__ == "__main__":
     # load_dotenv(find_dotenv())
-    # app.run()
+    app.run()
 
-    serve(app, host="0.0.0.0")
+    # serve(app, host="0.0.0.0")
