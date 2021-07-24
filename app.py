@@ -102,8 +102,8 @@ def page_not_found(e):
     </body>""", 500)
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # load_dotenv(find_dotenv())
-    app.run()
+    # app.run()
 
     # serve(app, host="0.0.0.0")
