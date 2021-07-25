@@ -1,8 +1,5 @@
-import flask
-from flask import request, jsonify
+from flask import request, jsonify, Flask
 import markdown
-# from waitress import serve
-# from dotenv import find_dotenv, load_dotenv
 
 from utils_mongodb.mongo_connection import get_db_handle_mongodb
 from utils_mongodb.read_documents import get_all_documents, get_one_document
@@ -11,7 +8,7 @@ from utils_mongodb.delete_document import delete_one_document
 from utils_mongodb.update_document import update_one_document
 from validation_data.validation_document_input import VideoValidation
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
@@ -38,7 +35,7 @@ def get_one_video(id):
     app.logger.info(id)
     db_handle, _ = get_db_handle_mongodb(database_name='study')
     data = get_one_document(db_handle, id)
-    if data != None:
+    if data is not None:
         return jsonify(data)
     else:
         return "Não encontrado."
@@ -48,7 +45,7 @@ def get_one_video(id):
 def create_video():
     data_request = request.get_json()
 
-    if (data_request.get('titulo') != None) and (data_request.get('descricao') != None) and (data_request.get('url') != None):
+    if (data_request.get('titulo') is not None) and (data_request.get('descricao') is not None) and (data_request.get('url') is not None):
         try:
             VideoValidation(
                 data_request.get('titulo'),
@@ -85,7 +82,7 @@ def update_one_video():
     data_request = request.get_json()
     db_handle, _ = get_db_handle_mongodb(database_name='study')
 
-    if data_request.get('id') == None:
+    if data_request.get('id') is None:
         return jsonify({'message': "Não foi encontrado o campo 'id', por favor, inserir.", 'error': True})
     else:
         id_value = data_request['id']
