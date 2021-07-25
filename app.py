@@ -1,5 +1,6 @@
 import flask
 from flask import request, jsonify
+import markdown
 # from waitress import serve
 # from dotenv import find_dotenv, load_dotenv
 
@@ -15,7 +16,14 @@ app = flask.Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
+    with open('README.md', 'r', encoding='utf-8') as f:
+        text = f.read()
+        html = f""" 
+                <body style="font-family: sans-serif">
+                {markdown.markdown(text)}
+                </body>
+                """
+    return html
 
 
 @app.route('/videos', methods=['GET'])
