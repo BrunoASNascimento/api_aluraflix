@@ -22,11 +22,11 @@ def get_next_sequence_value(id_value):
 
 
 # Insert a document
-db.develop.insert_one(
+db.aluraflix.insert_one(
     {'test': 'test', "_id": get_next_sequence_value('develop')})
 
 # Get all documents
-cursor = db.develop.find({})
+cursor = db.aluraflix.find({})
 
 # Print documents
 for idx, val in enumerate(cursor):

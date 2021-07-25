@@ -1,5 +1,6 @@
 import flask
 from flask import request, jsonify
+import markdown
 # from waitress import serve
 # from dotenv import find_dotenv, load_dotenv
 
@@ -8,13 +9,21 @@ from utils_mongodb.read_documents import get_all_documents, get_one_document
 from utils_mongodb.create_document import create_document
 from utils_mongodb.delete_document import delete_one_document
 from utils_mongodb.update_document import update_one_document
+from validation_data.validation_document_input import VideoValidation
 
 app = flask.Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
+    with open('README.md', 'r', encoding='utf-8') as f:
+        text = f.read()
+        html = f""" 
+                <body style="font-family: sans-serif">
+                {markdown.markdown(text)}
+                </body>
+                """
+    return html
 
 
 @app.route('/videos', methods=['GET'])
@@ -40,6 +49,18 @@ def create_video():
     data_request = request.get_json()
 
     if (data_request.get('titulo') != None) and (data_request.get('descricao') != None) and (data_request.get('url') != None):
+        try:
+            VideoValidation(
+                data_request.get('titulo'),
+                data_request.get('descricao'),
+                data_request.get('url')
+            )
+        except Exception as error:
+            return jsonify({
+                'error': True,
+                'message': str(error)
+            })
+
         db_handle, _ = get_db_handle_mongodb(database_name='study')
         data = create_document(db_handle, data_request)
         return jsonify(data)
@@ -100,10 +121,3 @@ def page_not_found(e):
     <img src="{url_link}">
     </center>
     </body>""", 500)
-
-
-# if __name__ == "__main__":
-    # load_dotenv(find_dotenv())
-    # app.run()
-
-    # serve(app, host="0.0.0.0")
